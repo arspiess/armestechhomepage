@@ -1,50 +1,45 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Armes Tech - Soluções Tecnológicas</title>
+    <title>MQTT Image Viewer</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f5f5;
-            color: #333;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
             text-align: center;
         }
-        h1 {
-            color: #007bff;
-        }
-        p {
-            font-size: 1.1em;
-        }
-        .btn {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-        .btn:hover {
-            background-color: #0056b3;
+        #stream {
+            position: absolute;
+            bottom: 50%;
+            border: 2px solid gray;
+            border-radius: 5%;
         }
     </style>
 </head>
 <body>
+    <h1>Teste Esp32-Cam</h1>
+    <div class="container">
+        <img id="stream"/>
+    </div>
 
-<div class="container">
-    <h1>Bem-vindo à Armes Tech</h1>
-    <p>Soluções Tecnológicas para o seu negócio</p>
-    <a href="#" class="btn">Saiba Mais</a>
-</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/4.2.7/mqtt.min.js"></script>
+    <script>
+        const client = mqtt.connect('wss://test.mosquitto.org:8081/mqtt');
 
+        client.on('connect', function () {
+            console.log('Conectado ao broker MQTT');
+            client.subscribe('ArmestechCamera');
+        });
+
+        client.on('message', function (topic, message) {
+            const data = message.toString();
+            console.log(data);
+            document.getElementById('stream').src = data;
+        });
+
+        client.on('error', function (error) {
+            console.log('Erro no cliente MQTT:', error);
+        });
+    </script>
 </body>
 </html>
